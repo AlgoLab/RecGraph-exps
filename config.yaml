@@ -1,0 +1,17 @@
+seq: /data/abpoa-comparison/Homo_sapiens.GRCh38.dna.chromosome.21.fa
+odir: /data/abpoa-comparison
+abpoa: /data/rspoa/target/release/rspoa
+rspoa: /home/denti/software/abPOA-v1.4.1/bin/abpoa
+iterations: 100
+numreads:
+  - 75 # this means 50x
+region_lens:
+  # - 1000 # this just for testing
+  - 10000
+  - 25000
+tools:
+  - abpoa
+  - rspoa
+simulators:
+  - pbsim
+  - nanosim
