@@ -1,14 +1,17 @@
 import numpy as np
 
+def table(dists_rs, out='md'):
+    if out == 'md':
+        print('| | Average Dist | std Dist | Max Dist | Min Dist |')
+        print('| --- | ---: | ---: | ---: | ---: |')
+        print(f'| rsPOA | {np.mean(dists_rs):.2f} | {np.std(dists_rs):.2f} | {max(dists_rs):.2f} | {min(dists_rs):.2f} |')
+
 def describe(_dists):
     print(f'count\t{len(_dists)}')
     print(f'mean\t\t{np.mean(_dists):10.4f}')
     print(f'std\t\t{np.std(_dists):10.4f}')
     print(f'min\t\t{min(_dists):10.4f}')
     print(f'max\t\t{max(_dists):10.4f}')
-    print(f'sum\t\t{sum(_dists):10.4f}')
-
-
 
 def load_data(files):
     dists = []
@@ -22,7 +25,6 @@ def load_data(files):
         avg_drun.append(np.mean(dd))
         dists += dd
 
-    
     return dists, avg_drun
 
 if __name__ == '__main__':
@@ -35,6 +37,6 @@ if __name__ == '__main__':
     
     rs_dists, rs_avg_drun = load_data(args.rspoa)
     print( '-- rsPOA ' + '-'*30)
-    describe(rs_dists)
+    table(rs_dists)
     print()
     print(f'**rsPOA** avg per region: \t{np.mean(rs_avg_drun):.4f}')
