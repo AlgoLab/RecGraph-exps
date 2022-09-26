@@ -2,7 +2,7 @@ seq: /data/abpoa-comparison/Homo_sapiens.GRCh38.dna.chromosome.21.fa
 odir: /data/abpoa-comparison
 abpoa: /data/rspoa/target/release/rspoa
 rspoa: /home/denti/software/abPOA-v1.4.1/bin/abpoa
-iterations: 100
+iterations: 10
 numreads:
   - 75 # this means 50x
 region_lens:
