@@ -24,23 +24,27 @@ def load_data(files, tool):
     avg_rrun = []
 
     for f in files:
+        tt = []
+        rr = []
         for line in open(f, 'r'):
             if tool == 'abpoa':
                 if '[abpoa_main]' in line:
                     data = line.strip().split(' ')
-                    times.append(float(data[3]))
-                    rams.append(float(data[10]))
+                    tt.append(float(data[3]))
+                    rr.append(float(data[10]))
             if tool == 'rspoa':
                 if 'Elapsed (wall clock)' in line:
                     t = line.strip().split(' ')[-1]
                     m, sec = t.split(':')
-                    times.append(int(m)*60 + float(sec))
+                    tt.append(int(m)*60 + float(sec))
                 elif 'Maximum resident set' in line:
                     r = line.strip().split(' ')[-1]
-                    rams.append(float(r)*1e-6) # TODO: CHECKME
+                    rr.append(float(r)*1e-6) # TODO: CHECKME
 
-        avg_trun.append(np.mean(times))
-        avg_rrun.append(np.mean(rams))
+        avg_trun.append(np.mean(tt))
+        times += tt
+        avg_rrun.append(np.mean(rr))
+        rams += rr
 
     
     return times, rams, avg_trun, avg_rrun
