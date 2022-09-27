@@ -183,7 +183,7 @@ rule run_abpoa:
     threads: workflow.cores
     shell:
         """
-        bash ./scripts/run_abpoa.sh {input.gfa} {input.fa_test} {params.wd} 2 {ABPOA_BIN} > {output.log}
+        bash ./scripts/run_abpoa.sh {input.gfa} {input.fa_test} {params.wd} 8 {ABPOA_BIN} > {output.log}
         """
 
 
@@ -198,5 +198,5 @@ rule run_rspoa:
     threads: workflow.cores
     shell:
         """
-        bash ./scripts/run_rspoa.sh {input.gfa} {input.fa_test} {params.wd} 2 {RSPOA_BIN} > {output.log}
+        bash ./scripts/run_rspoa.sh {input.gfa} {input.fa_test} {params.wd} 8 {RSPOA_BIN} > {output.log}
         """
