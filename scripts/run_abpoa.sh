@@ -9,11 +9,11 @@ BIN=$5
 run () {
     i=$1
     tmp_fa="$WD/$i.read.fa"
-    out_fa="$WD/$i.consensus.fa"
+    out_fa="$WD/$i.consensus.msa.fa"
     tlog="$WD/$i.time"
     log="$WD/$i.log"
     head -n $((2*i)) $fa | tail -n 2 > $tmp_fa
-    /usr/bin/time -vo $tlog $BIN -i $gfa $tmp_fa > $out_fa 2> $log
+    /usr/bin/time -vo $tlog $BIN -r 2 -m 1 -i $gfa $tmp_fa > $out_fa 2> $log
 }
 
 mkdir -p $WD
