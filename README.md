@@ -15,6 +15,7 @@ snakemake [-n] [-p] -c 16 --use-conda
 snakemake -s postrun.smk -c16 -R calc [-n] [-p]
 snakemake -s postrun.smk -c16 -R tables [-n] [-p]
 
-tail -n +1 /data/abpoa-comparison/results/*.N75.L10000.dists.table | most
+tail -n +1 /data/abpoa-comparison/results/*.N75.L*.cmptimes.table | most
+tail -n +1 /data/abpoa-comparison/results/*.N75.L*.dists.table | most
 
 ```
