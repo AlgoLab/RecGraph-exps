@@ -7,12 +7,29 @@ REGION_LENS = config["region_lens"]
 SIMULATORS = config["simulators"]
 TOOLS = config["tools"]
 
-rule run:
+rule calc:
     input:
-        fa=expand(
-            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.run.fa",
+        levdist=expand(
+            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/{TOOLS}.levdist",
             sim=SIMULATORS,
             region=Is,
+            NUMREAD=NUMREADS,
+            REGION_LEN=REGION_LENS,
+            TOOLS=["rspoa"],
+        ),
+        percalns=expand(
+            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.percalns",
+            sim=SIMULATORS,
+            region=Is,
+            NUMREAD=NUMREADS,
+            REGION_LEN=REGION_LENS,
+        ),
+
+rule tables:
+    input:
+        diststable=expand(
+            WD + "/results/{sim}.N{NUMREAD}.L{REGION_LEN}.dists.table",
+            sim=SIMULATORS,
             NUMREAD=NUMREADS,
             REGION_LEN=REGION_LENS,
         ),
@@ -22,27 +39,15 @@ rule run:
             NUMREAD=NUMREADS,
             REGION_LEN=REGION_LENS,
         ),
-        levdist=expand(
-            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/{TOOLS}.levdist",
-            sim=SIMULATORS,
-            region=Is,
-            NUMREAD=NUMREADS,
-            REGION_LEN=REGION_LENS,
-            TOOLS=TOOLS,
-        ),
-        percalns=expand(
-            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.percalns",
-            sim=SIMULATORS,
-            region=Is,
-            NUMREAD=NUMREADS,
-            REGION_LEN=REGION_LENS,
-        ),
-        diststable=expand(
-            WD + "/results/{sim}.N{NUMREAD}.L{REGION_LEN}.dists.table",
-            sim=SIMULATORS,
-            NUMREAD=NUMREADS,
-            REGION_LEN=REGION_LENS,
-        ),
+
+rule clean:
+    shell:
+        """
+            rm /data/abpoa-comparison/results/*/*/N75.*/*.levdist
+            rm /data/abpoa-comparison/results/*/*/N75.*/rspoa.run.fa
+            rm /data/abpoa-comparison/results/*.table
+            rm /data/abpoa-comparison/results/*/*/N75.*/rspoa.percalns
+        """
 
 rule gaf2fa:
     input:
@@ -79,7 +84,7 @@ rule cat_abpoa_consensus:
 
 rule calc_lev:
     input:
-        fortest_fa=WD+ "/results/{region}/nanosim/N{NUMREAD}.L{REGION_LEN}/reads.fortest.fa",
+        fortest_fa=WD+ "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/reads.fortest.fa",
         fa=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/{TOOLS}.run.fa",
     output:
         levdist=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/{TOOLS}.levdist",
@@ -95,14 +100,14 @@ rule calc_perc_alns:
         percaln=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.percalns",
     shell:
         """
-            python ./scripts/levdist.py {params.gaf} > {output.percaln}
+            python ./scripts/gaf2percaln.py {params.gaf} > {output.percaln}
         """
 
 rule make_tables_dist:
     output:
         table=WD + "/results/{sim}.N{NUMREAD}.L{REGION_LEN}.dists.table",
     params:
-        abpoa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/abpoa.levdist",
+        # abpoa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/abpoa.levdist",
         rspoa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.levdist",
         rspoa_pa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.percalns",
     shell:

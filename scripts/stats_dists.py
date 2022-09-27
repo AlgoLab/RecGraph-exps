@@ -78,9 +78,10 @@ if __name__ == '__main__':
     if args.abpoa:
         print(f'**abPOA** avg per region: \t{np.mean(ab_avg_drun):.4f} \\')
     if args.rspoa:
-        print(f'**rsPOA** avg per region: \t{np.mean(rs_avg_drun):.4f}')
+        print(f'**rsPOA** avg per region: \t{np.mean(rs_avg_drun):.4f} \\')
 
     rs_pa, rs_avg_prun = load_data_dists(args.rspercal)
     if args.rspercal:
-        print( '-- rsPOA (%% read alignment)' + '-'*30)
-        describe(rs_pa)
+        print(f'**rsPOA** avg % of read alignment: \t{np.mean(rs_pa):.4f}')
+        # print( '-- rsPOA (%% read alignment)' + '-'*30)
+        # describe(rs_pa)

@@ -12,5 +12,9 @@ mamba create -c bioconda -n rspoaexps snakemake-minimal biopython seqtk
 # updates config.yaml setting seq, odir, abpoa, and rspoa
 snakemake [-n] [-p] -c 16 --use-conda
 # requires python natsort
-snakemake -s postrun.smk -c16 [-n] [-p]
+snakemake -s postrun.smk -c16 -R calc [-n] [-p]
+snakemake -s postrun.smk -c16 -R tables [-n] [-p]
+
+tail -n +1 /data/abpoa-comparison/results/*.N75.L10000.dists.table | most
+
 ```
