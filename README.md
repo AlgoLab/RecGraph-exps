@@ -11,4 +11,6 @@ mamba create -c bioconda -n rspoaexps snakemake-minimal biopython seqtk
 ```bash
 # updates config.yaml setting seq, odir, abpoa, and rspoa
 snakemake [-n] [-p] -c 16 --use-conda
+# requires python natsort
+snakemake -s postrun.smk -c16 [-n] [-p]
 ```

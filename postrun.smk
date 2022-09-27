@@ -23,11 +23,12 @@ rule run:
             REGION_LEN=REGION_LENS,
         ),
         levdist=expand(
-            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.levdist",
+            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/{TOOLS}.levdist",
             sim=SIMULATORS,
             region=Is,
             NUMREAD=NUMREADS,
             REGION_LEN=REGION_LENS,
+            TOOLS=TOOLS,
         ),
         diststable=expand(
             WD + "/results/{sim}.N{NUMREAD}.L{REGION_LEN}.dists.table",
@@ -59,23 +60,34 @@ rule make_tables_times:
             python ./scripts/stats_times.py --abpoa {params.abpoa} --rspoa {params.rspoa} > {output.table}
         """
 
+rule cat_abpoa_consensus:
+    output:
+        abpoa_fa=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/abpoa.run.fa",
+    params:
+        abpoa_dir=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/abpoa",
+    shell:
+        """
+            find {params.abpoa_dir} -name "*.consensus.fa" | sort -V | xargs cat > {output.abpoa_fa}
+        """
+
 rule calc_lev:
     input:
         fortest_fa=WD+ "/results/{region}/nanosim/N{NUMREAD}.L{REGION_LEN}/reads.fortest.fa",
-        rspoa_fa=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.run.fa",
+        fa=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/{TOOLS}.run.fa",
     output:
-        levdist=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.levdist",
+        levdist=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/{TOOLS}.levdist",
     shell:
         """
-            python ./scripts/levdist.py {input.fortest_fa} {input.rspoa_fa} > {output.levdist}
+            python ./scripts/levdist.py {input.fortest_fa} {input.fa} > {output.levdist}
         """
 
 rule make_tables_dist:
     output:
         table=WD + "/results/{sim}.N{NUMREAD}.L{REGION_LEN}.dists.table",
     params:
+        abpoa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/abpoa.levdist",
         rspoa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.levdist",
     shell:
         """
-            python ./scripts/stats_dists.py --rspoa {params.rspoa} > {output.table}
+            python ./scripts/stats_dists.py --abpoa {params.abpoa} --rspoa {params.rspoa} > {output.table}
         """
