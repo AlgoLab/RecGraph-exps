@@ -8,7 +8,7 @@ numreads:
 region_lens:
   # - 1000 # this just for testing
   - 10000
-  # - 25000
+  - 25000
 tools:
   - abpoa
   - rspoa

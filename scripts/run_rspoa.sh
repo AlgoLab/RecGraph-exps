@@ -13,7 +13,7 @@ run () {
     tlog="$WD/$i.time"
     log="$WD/$i.log"
     head -n $((2*i)) $fa | tail -n 2 > $tmp_fa
-    /usr/bin/time -vo $tlog $BIN -m 1 $tmp_fa $gfa > $out_fa 2> $log
+    /usr/bin/time -vo $tlog $BIN -m 0 $tmp_fa $gfa > $out_fa 2> $log
 }
 
 mkdir -p $WD
