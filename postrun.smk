@@ -30,6 +30,13 @@ rule run:
             REGION_LEN=REGION_LENS,
             TOOLS=TOOLS,
         ),
+        percalns=expand(
+            WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.percalns",
+            sim=SIMULATORS,
+            region=Is,
+            NUMREAD=NUMREADS,
+            REGION_LEN=REGION_LENS,
+        ),
         diststable=expand(
             WD + "/results/{sim}.N{NUMREAD}.L{REGION_LEN}.dists.table",
             sim=SIMULATORS,
@@ -81,13 +88,24 @@ rule calc_lev:
             python ./scripts/levdist.py {input.fortest_fa} {input.fa} > {output.levdist}
         """
 
+rule calc_perc_alns:
+    params:
+        gaf=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa/*.alignment.fa",
+    output:
+        percaln=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.percalns",
+    shell:
+        """
+            python ./scripts/levdist.py {params.gaf} > {output.percaln}
+        """
+
 rule make_tables_dist:
     output:
         table=WD + "/results/{sim}.N{NUMREAD}.L{REGION_LEN}.dists.table",
     params:
         abpoa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/abpoa.levdist",
         rspoa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.levdist",
+        rspoa_pa=WD + "/results/*/{sim}/N{NUMREAD}.L{REGION_LEN}/rspoa.percalns",
     shell:
         """
-            python ./scripts/stats_dists.py --abpoa {params.abpoa} --rspoa {params.rspoa} > {output.table}
+            python ./scripts/stats_dists.py --rspoa {params.rspoa} --rspercal {params.rspoa_pa} > {output.table}
         """
