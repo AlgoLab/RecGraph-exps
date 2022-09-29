@@ -30,7 +30,7 @@ rule exctract_rand_region:
     output:
         extracted=WD + "/results/{region}/region-{REGION_LEN}.fa",
     params:
-        reglen=lambda wildcards: int(wildcards.REGION_LEN),
+        reglen=lambda wildcards: int(int(wildcards.REGION_LEN) * 1.0005),
     run:
         shell(
             "python ./scripts/extract_random_region.py {FASTACHR} {params.reglen} > {output.extracted}"
@@ -42,8 +42,8 @@ rule run_pbsim:
         region=WD + "/results/{region}/region-{REGION_LEN}.fa",
     params:
         model="/home/denti/software/pbsim2/data/P6C4.model",
-        lenmax=lambda wildcards: int(wildcards.REGION_LEN),
-        lenmin=lambda wildcards: int(wildcards.REGION_LEN),
+        lenmax=lambda wildcards: int(int(wildcards.REGION_LEN)*1.0001),
+        lenmin=lambda wildcards: int(int(wildcards.REGION_LEN)*0.9999),
         lenmean=lambda wildcards: wildcards.REGION_LEN,
         depth=lambda wildcards: wildcards.NUMREAD,  # this since region_len ~ avg_read_len
         accmax=0.9,
@@ -71,19 +71,20 @@ rule run_nano:
         region=WD + "/results/{region}/region-{REGION_LEN}.fa",
     params:
         c="/home/denti/software/NanoSim/pre-trained_models/human_NA12878_DNA_FAB49712_guppy/training",
-        lenmax=lambda wildcards: int(wildcards.REGION_LEN),
-        lenmin=lambda wildcards: int(wildcards.REGION_LEN),
+        lenmax=lambda wildcards: int(int(wildcards.REGION_LEN)*1.0001),
+        lenmin=lambda wildcards: int(int(wildcards.REGION_LEN)*0.9999),
         prefix=WD + "/results/{region}/nanosim/N{NUMREAD}.L{REGION_LEN}/reads",
     output:
         fa=WD
         + "/results/{region}/nanosim/N{NUMREAD}.L{REGION_LEN}/reads_aligned_reads.fasta",
-    threads: workflow.cores / 4
+    threads: workflow.cores
     conda:
         "envs/nanosim.yaml"
     shell:
         """
         mkdir -p $(dirname {params.prefix})
         simulator.py genome -rg {input.region} -n {wildcards.NUMREAD} \\
+            -t {threads} \\
             -max {params.lenmax} \\
             -min {params.lenmin} \\
             -b guppy -s 0 \\
@@ -150,7 +151,7 @@ rule build_gfa:
     threads: workflow.cores / 2
     shell:
         """
-        /home/denti/software/abPOA-v1.4.1/bin/abpoa -m 0 -r 3 {input.fa} > {output.gfa}
+        /home/denti/software/abPOA-v1.4.1/bin/abpoa -s -m 0 -r 3 {input.fa} > {output.gfa}
         """
 
 
