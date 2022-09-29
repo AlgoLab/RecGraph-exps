@@ -1,4 +1,4 @@
-configfile: "config.yaml"
+configfile: "abpoacomp-config.yaml"
 
 WD = config["odir"]
 Is = range(1, config["iterations"] + 1)
@@ -72,7 +72,7 @@ rule make_tables_times:
             python ./scripts/stats_times.py --abpoa {params.abpoa} --rspoa {params.rspoa} > {output.table}
         """
 
-rule cat_abpoa_consensus:
+rule cat_abpoa_consensus: # TODO: remember abPOA use NOT SORTED graph
     output:
         abpoa_fa=WD + "/results/{region}/{sim}/N{NUMREAD}.L{REGION_LEN}/abpoa.run.fa",
     params:
