@@ -110,13 +110,16 @@ def ok_path(edges, ce, curr, path, curr_dist, max_recomb, min_dist):
     base_dist = min(curr_dist - min_dist, vlens[vertex])
     candidates = compute_candidates(edges, ce, min_dist) - {curr}
     for candidate in sorted(candidates):
-        result = ok_path(edges, ce+1, candidate, path, base_dist, max_recomb-1, min_dist)
+        result = ok_path(
+            edges, ce + 1, candidate, path, base_dist, max_recomb - 1, min_dist
+        )
         if result is not None:
             return result
     return None
 
+
 MIN_DIST = 150
-MAX_RECOMB = 3
+MAX_RECOMB = 1
 for pid in sorted(to_delete):
     edges = paths[pid][1]
 
@@ -124,8 +127,11 @@ for pid in sorted(to_delete):
     candidates = compute_candidates(edges, 0, MIN_DIST)
 
     result = None
-    for max_recomb in range(1, MAX_RECOMB+1):
-        print(f"# Trying to explain path {pid} with {max_recomb} recombinations...", file=sys.stderr)
+    for max_recomb in range(1, MAX_RECOMB + 1):
+        print(
+            f"# Trying to explain path {pid} with {max_recomb} recombinations...",
+            file=sys.stderr,
+        )
         for candidate in sorted(candidates):
             result = ok_path(edges, 0, candidate, [], 0, max_recomb, MIN_DIST)
             if result is not None:
@@ -133,10 +139,14 @@ for pid in sorted(to_delete):
         if result is not None:
             break
     if result is None:
-        print(f"# Path {pid} is a NOT a mosaic of the path cover with minimum recombination distance of {MIN_DIST} and max no of recombination of {MAX_RECOMB}", file=sys.stderr)
+        print(
+            f"# Path {pid} is a NOT a mosaic of the path cover with minimum recombination distance of {MIN_DIST} and max no of recombination of {MAX_RECOMB}",
+            file=sys.stderr,
+        )
     else:
-        print(f"# Path {pid} is a mosaic with {max_recomb} recombinations of {list(zip(edges, result))}", file=sys.stderr)
-        print(f"# Path {pid} is a mosaic with {max_recomb} recombinations of {result}", file=sys.stderr)
+        print(
+            f"# Path {pid} is a mosaic with {max_recomb} recombinations of {list(zip(edges, result))}",
+            file=sys.stderr,
+        )
+        # print(f"# Path {pid} is a mosaic with {max_recomb} recombinations of {result}", file=sys.stderr)
         assert len(result) == len(edges)
-
-
