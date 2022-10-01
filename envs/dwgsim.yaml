@@ -1,0 +1,7 @@
+name: dwgsim-sm
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - dwgsim
+  - biopython

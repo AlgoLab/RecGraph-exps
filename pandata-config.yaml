@@ -1,0 +1,7 @@
+seqs: /data/pandoro/ecoli_core_gene_alignments
+odir: /data/pandoro/OUT
+graphs:
+  - makeprg
+  # - pggb
+rspoa: /data/rspoa/target/release/rspoa
+mkprg: /home/denti/makeprgenv/bin/make_prg
