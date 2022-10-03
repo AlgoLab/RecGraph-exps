@@ -1,0 +1,37 @@
+# odir: /data/abpoa-comparison-msa
+odir: /data/allpan-exps
+rspoa: /data/rspoa/target/release/rspoa
+abpoa: /home/denti/software/abPOA-v1.4.1/bin/abpoa
+# sampledir: /data/pandoro/ecoli_core_gene_alignments/
+sampledir: /data/allpan/
+tools:
+  - abpoa
+  - rspoa
+samples:
+  # - GC00004963_na_aln
+  # - GC00001080_3_na_aln
+  # - GC00001977_1_na_aln
+  # - GC00004341_na_aln
+  # - GC00001580_3_na_aln
+  # - GC00001657_1_na_aln
+  # - GC00003739_na_aln
+  # - GC00004661_na_aln
+  # - GC00001662_2_na_aln
+  # - GC00004201_na_aln
+  # - GC00001222_3_na_aln
+  # - GC00004673_na_aln
+  # - GC00004726_na_aln
+  # - GC00004671_na_aln
+  # - GC00000035_11_na_aln
+  # - GC00000011_38_na_aln
+  # - GC00001971_2_na_aln
+  # - GC00004599_na_aln
+  # - GC00001097_3_na_aln
+  # - GC00001182_4_na_aln
+  # - GC00004339_na_aln
+  # - GC00004665_na_aln
+  # - GC00003679_na_aln
+  # - GC00002379_2_na_aln
+  # - GC00004267_na_aln
+  # - GC00004750_na_aln
+  - Buchnera_aphidicola
