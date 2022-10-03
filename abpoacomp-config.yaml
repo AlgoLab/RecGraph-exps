@@ -5,7 +5,7 @@ abpoa: /home/denti/software/abPOA-v1.4.1/bin/abpoa
 iterations: 10
 numreads:
   - 75 # this means 50x
-region_lens:
+read_lens:
   # - 1000 # this just for testing
   - 10000
   - 25000
@@ -13,5 +13,5 @@ tools:
   - abpoa
   - rspoa
 simulators:
-  - pbsim
-  # - nanosim
+  - pb
+  - ont

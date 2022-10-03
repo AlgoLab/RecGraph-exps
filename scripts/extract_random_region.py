@@ -12,7 +12,9 @@ def main():
     while True:
         s = random.randint(CSTART, CEND - 2 * l)
         if str(record[s : s + l + 1].seq).count("N") < l / 500:  # HARDCODED
-            SeqIO.write(record[s : s + l + 1], sys.stdout, "fasta")
+            SeqIO.write(
+                record[s : s + l + 1], sys.stdout, "fasta"
+            )
             break
 
 
