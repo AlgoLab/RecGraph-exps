@@ -1,9 +1,5 @@
 import sys
 
-import pdb
-
-# pdb.set_trace()
-
 
 def main():
     gfa_path = sys.argv[1]

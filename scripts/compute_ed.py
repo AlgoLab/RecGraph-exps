@@ -5,12 +5,12 @@ from Levenshtein import distance as lev
 from gaf2fa import load_gfa_nodes
 
 
-def convert_se_giraffe(nodes, path, s, e):
+def convert(nodes, path, s, e):
     r = ""
     if ">" in path:
         path = path.split(">")[1:]
         for n in path:
-            r += nodes[n]  # if n in nodes else ""
+            r += nodes[n]
     else:
         print(path)
         raise NotImplementedError(
@@ -18,28 +18,6 @@ def convert_se_giraffe(nodes, path, s, e):
             Not clear how to read it."
         )
     return r[s : e + 1]
-
-
-def convert_se_rspoa(nodes, path, s, e):
-    r = ""
-    # used_nodes = set()
-    if ">" in path:
-        path = path.split(">")[1:]
-        r += nodes[path[0]][s:]  # if path[0] in nodes else ""
-        # used_nodes.add(path[0])
-        for n in path[1:-1]:
-            # if n not in used_nodes:
-            r += nodes[n]  # if n in nodes else ""
-            # used_nodes.add(n)
-        # if path[-1] not in used_nodes:
-        r += nodes[path[-1]][: e + 1]  # if path[-1] in nodes else ""
-    else:
-        print(path)
-        raise NotImplementedError(
-            "Path on reverse strand is not implemented yet.\
-            Not clear how to read it."
-        )
-    return r
 
 
 def main():
@@ -61,13 +39,13 @@ def main():
     )
 
     parser.add_argument(
-        "-t",
-        "--tool",
-        dest="tool",
-        default="rspoa",
+        "-f",
+        "--format",
+        dest="fformat",
+        default="gaf",
         required=True,
         type=str,
-        help="Tool (rspoa/giraffe/bwa) used to produce the alignments (default: rspoa)",
+        help="Alignment (gaf/bam) format (default: gaf)",
     )
 
     args = parser.parse_args()
@@ -77,20 +55,20 @@ def main():
         reads[record.id] = str(record.seq)
     print(len(reads))
 
-    if args.tool == "rspoa" or args.tool == "giraffe":
+    if args.fformat.startswith("gaf"):
         nodes = load_gfa_nodes(args.graph)
         for line in open(args.alignments):
             line = line.strip("\n").split("\t")
             idx = line[0]
             path = line[5]
+            if path == "*":
+                continue  # FIXME for giraffe
+            path_seq = line[-1]
+            if ":" in path_seq:
+                path_seq = convert(nodes, path, int(line[7]), int(line[8]))
             read = reads[idx]
-            path_seq = ""
-            if args.tool == "rspoa":
-                path_seq = convert_se_rspoa(nodes, path, int(line[7]), int(line[8]))
-            else:
-                path_seq = convert_se_giraffe(nodes, path, int(line[7]), int(line[8]))
             print(idx, path_seq, read, lev(path_seq, read))
-    elif args.tool == "bwa":
+    else:
         bam = pysam.AlignmentFile(args.alignments, "rb")
         for read in bam.fetch():
             print(read.query_name, "*", "*", read.get_tag("NM"))

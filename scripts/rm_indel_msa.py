@@ -1,4 +1,3 @@
-import gzip
 import sys
 
 from Bio import SeqIO

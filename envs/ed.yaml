@@ -1,0 +1,8 @@
+name: ed-sm
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - pysam
+  - biopython
+  - levenshtein
