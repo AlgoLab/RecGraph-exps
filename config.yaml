@@ -1,6 +1,7 @@
 seqsdir: /data/pandoro/ecoli_core_gene_alignments
-odir: /data/pandoro/OUT-pt
+odir: /data/pandoro/OUT
 rspoa: /data/rspoa/target/release/rspoa
+mkprg: /home/denti/makeprgenv/bin/make_prg
 seqs:
   - GC00000303_9_na_aln
   - GC00000748_2_na_aln

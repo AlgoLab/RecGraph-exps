@@ -2,7 +2,7 @@ from os.path import join as pjoin
 from glob import glob
 
 
-configfile: "pandata-config.yaml"
+configfile: "config.yaml"
 
 
 SEQSDIR = config["seqsdir"]
@@ -17,7 +17,7 @@ Xs = [4]  # , 6, 10]
 Os = [4]  # , 6, 10]
 Es = [2]  # , 3, 4]
 Rs = [4]  # [8]  # 2, 3, 4, 7
-rs = [0.1, 0.8]  # 1, 4
+rs = [0.1]  # 1, 4
 
 rspoa_output = []
 giraffe_output = []
@@ -55,7 +55,7 @@ for fpath in glob(pjoin(SEQSDIR, "*", "1-150", "*", "sequence.fa")):
                             "1-150",
                             mosaic,
                             c,
-                            f"rspoa2-9.R{R}-r{r}.dist.txt",
+                            f"rspoa-9.R{R}-r{r}.dist.txt",
                         )
                     )
 
@@ -174,7 +174,7 @@ rule rspoa9_map:
             "{recpar}",
             "{mosaic}",
             "{coverage}",
-            "rspoa2-9.R{R}-r{r}.gaf",
+            "rspoa-9.R{R}-r{r}.gaf",
         ),
     log:
         time=pjoin(
@@ -183,7 +183,7 @@ rule rspoa9_map:
             "{recpar}",
             "{mosaic}",
             "{coverage}",
-            "rspoa2-9.R{R}-r{r}.time",
+            "rspoa-9.R{R}-r{r}.time",
         ),
         out=pjoin(
             OUTDIR,
@@ -191,12 +191,12 @@ rule rspoa9_map:
             "{recpar}",
             "{mosaic}",
             "{coverage}",
-            "rspoa2-9.R{R}-r{r}.log",
+            "rspoa-9.R{R}-r{r}.log",
         ),
     threads: 1
     shell:
         """
-        /usr/bin/time -vo {log.time} {RSPOA_BIN} -m 9 -B 0.9 -R {wildcards.R} -r {wildcards.r} {input.fa} {input.gfa} > {output.gaf} 2> {log.out}
+        /usr/bin/time -vo {log.time} {RSPOA_BIN} -m 9 -B 0.8 -R {wildcards.R} -r {wildcards.r} {input.fa} {input.gfa} > {output.gaf} 2> {log.out}
         """
 
 
@@ -296,7 +296,7 @@ rule rspoa9_dist:
             "{recpar}",
             "{mosaic}",
             "{coverage}",
-            "rspoa2-9.R{R}-r{r}.gaf",
+            "rspoa-9.R{R}-r{r}.gaf",
         ),
     output:
         txt=pjoin(
@@ -305,7 +305,7 @@ rule rspoa9_dist:
             "{recpar}",
             "{mosaic}",
             "{coverage}",
-            "rspoa2-9.R{R}-r{r}.dist.txt",
+            "rspoa-9.R{R}-r{r}.dist.txt",
         ),
     conda:
         "envs/ed.yaml"

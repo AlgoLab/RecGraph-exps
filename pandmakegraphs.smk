@@ -1,7 +1,7 @@
 from os.path import join as pjoin
 
 
-configfile: "pandmakegraphs-config.yaml"
+configfile: "config.yaml"
 
 
 SEQSDIR = config["seqsdir"]
