@@ -1,7 +1,7 @@
 # RSPOA-EXPS
 
 To replicate the experiments:
-1. install [make_prg](https://github.com/leoisl/make_prg/tree/update) (`update` branch) and [rspoa](https://github.com/AlgoLab/rspoa)
+1. install [make_prg](https://github.com/leoisl/make_prg/tree/update) (`update` branch) and [RecGraph](https://github.com/AlgoLab/RecGraph)
 2. download the E.Coli core genes (`.msa`) from [panX](https://pangenome.org/):
 ```bash
 wget http://pangenome.de/dataset/Escherichia_coli/core_gene_alignments.tar.gz
