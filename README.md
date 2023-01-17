@@ -1,29 +1,47 @@
-# RSPOA-EXPS
 
-To replicate the experiments:
-1. install [make_prg](https://github.com/leoisl/make_prg/tree/update) (`update` branch) and [RecGraph](https://github.com/AlgoLab/RecGraph)
-2. download the E.Coli core genes (`.msa`) from [panX](https://pangenome.org/):
+### Data
+In our experiments we selected 5 species from [panX](https://pangenome.org) but these scripts can be used with any specie.
+
 ```bash
-wget http://pangenome.de/dataset/Escherichia_coli/core_gene_alignments.tar.gz
-tar xvfz core_gene_alignments.tar.gz
-# edit strains name containing /
-cd core_gene_alignments
-for fa in $(ls *.fa) ; do sed -i "s/\//-/g" $fa ; done
+# Get a .msa from pangenome.org
+wget https://data.master.pangenome.org/dataset/Burkholderia_pseudomallei/core_gene_alignments.zip
+unzip -q core_gene_alignments.zip
+cd core_genes
+# Remove proteins
+rm *_aa_aln.fa
+# Removes .msa with fewer strains (not needed)
+# n=... ; grep -c "^>" *.fa | grep -v ":${n}" | cut -f1 -d':' | xargs rm
+# Removes / and - from headers since they break everything
+for fa in $(ls *.fa) ; do sed -i "s/\//-/g;s/|/-/g" $fa ; samtools faidx $fa ; done
+cd ..
 ```
-3. update `config.yaml`:
-   - `seqsdir`, path to `core_gene_alignments` directory
-   - `odir`, desired output directory (for results)
-   - `rspoa`, path to `rspoa` binary
-   - `mkprg`, path to `make_prg` binary
-4. build the (minimal) pangenomes graphs and get recombinant strains:
-```bash
-snakemake [-n] [-p] -s pandmakegraphs.smk -c 32 --use-conda
+
+### Software
+1. Install [RecGraph](https://github.com/AlgoLab/RecGraph)
+2. All other dependencies are available on conda
 ```
-5. simulate and align reads:
-```bash
-snakemake [-n] [-p] -s pandata.smk -c 32 --use-conda
+mamba create -c bioconda -n rg-exps make_prg pandas seaborn biopython graphaligner vg odgi pggb samtools
 ```
-6. dump `.tsv` with alignments accuracy:
+
+### Experiment 1
+In this experiment, we build graphs using `make_prg`, simulate recombinants using minimum path cover, and then align the recombinants to a reduced graph using `RecGraph` and `GraphAligner`.
+
 ```bash
-python3 scripts/dump_tsv.py --genes 50genes.list --rspoa rspoa-5.M2-X4-O4-E2,rspoa-9.R4-r0.1 [OUT_DIRECTORY] > alignments_accuracy.tsv
+# Select 100 random genes from the core_genes directory previously created (see Data section)
+python3 scripts/select_random_genes.py core_genes 100 > core_genes_random100.csv
+
+# Prepare folder with selected genes. Cleans .msa from IUPAC
+bash copy_selected_genes.sh core_genes core_genes_random100.csv core_genes_random100
+
+# Build graphs and compute minimal path cover (-> recombinants + reduced graph)
+snakemake -s makegraphs.smk -c 32 -p --config seqsdir=core_genes_random100
+
+# Extract mosaics
+bash get_mosaics.sh core_genes_random100
+
+# Add noise to mosaics
+snakemake -s addnoise.smk -c 16 -p --config seqsdir=core_genes_random100
+
+# Align mosaics back to reduced graph
+snakemake -s align_1.smk -c 16 -p --config seqsdir=core_genes_random100
 ```
