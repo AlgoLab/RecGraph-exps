@@ -48,13 +48,9 @@ snakemake -s align.smk -c 16 -p --config seqsdir=core_genes_random100
 # results are in core_genes_random100.results.txt
 ```
 
-
 ### Experiment 2
-In this experiment, we build graphs using `make_prg`, align fasta files in `/data/cdifficile/`
+In this experiment, we build graphs using `make_prg`, align FASTA files in `/data/cdifficile/`
 
 ```bash
 snakemake -s clost_diff.smk -c16 -p
-snakemake -s align.smk -c 16 -p --config seqsdir=core_genes_random100
-
-# results are in core_genes_random100.results.txt
 ```
