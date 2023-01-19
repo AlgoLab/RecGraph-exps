@@ -55,7 +55,7 @@ for fpath in glob.glob(pjoin(SEQSDIR, "*", "MPCSIM", "*", "p*", "sequence.fa")):
             "MPCSIM",
             mosaic,
             f"p{p}",
-            f"recgraph-8-edge.R{R}-r{r}.gaf",
+            f"recgraph-8.R{R}-r{r}.gaf",
         )
     )
 
@@ -67,7 +67,7 @@ rule run:
         rg8_output,
         ga_output,
     output:
-        (SEQSDIR[:-1] if SEQSDIR.endswith("/") else SEQSDIR) + ".results.txt.EDGE",
+        (SEQSDIR[:-1] if SEQSDIR.endswith("/") else SEQSDIR) + ".results.txt",
     shell:
         """
         python3 scripts/check.py {SEQSDIR} > {output}
@@ -159,7 +159,7 @@ rule rg8_map:
             "MPCSIM",
             "{mosaic}",
             "p{p}",
-            "recgraph-8-edge.R{R}-r{r}.gaf",
+            "recgraph-8.R{R}-r{r}.gaf",
         ),
     log:
         time=pjoin(
@@ -168,7 +168,7 @@ rule rg8_map:
             "MPCSIM",
             "{mosaic}",
             "p{p}",
-            "recgraph-8-edge.R{R}-r{r}.time",
+            "recgraph-8.R{R}-r{r}.time",
         ),
         out=pjoin(
             SEQSDIR,
@@ -176,7 +176,7 @@ rule rg8_map:
             "MPCSIM",
             "{mosaic}",
             "p{p}",
-            "recgraph-8-edge.R{R}-r{r}.log",
+            "recgraph-8.R{R}-r{r}.log",
         ),
     threads: 1
     shell:

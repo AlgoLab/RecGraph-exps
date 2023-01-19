@@ -43,5 +43,7 @@ bash get_mosaics.sh core_genes_random100
 snakemake -s addnoise.smk -c 16 -p --config seqsdir=core_genes_random100
 
 # Align mosaics back to reduced graph
-snakemake -s align_1.smk -c 16 -p --config seqsdir=core_genes_random100
+snakemake -s align.smk -c 16 -p --config seqsdir=core_genes_random100
+
+# results are in core_genes_random100.results.txt
 ```
