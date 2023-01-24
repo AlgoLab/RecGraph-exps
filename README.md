@@ -20,7 +20,7 @@ cd ..
 1. Install [RecGraph](https://github.com/AlgoLab/RecGraph)
 2. All other dependencies are available on conda
 ```
-mamba create -c bioconda -n rg-exps make_prg pandas seaborn biopython graphaligner vg odgi pggb samtools
+mamba create -c bioconda -n rg-exps snakemake-minimal make_prg pandas seaborn biopython graphaligner vg odgi pggb samtools
 ```
 
 ### Experiment 1
@@ -34,7 +34,7 @@ python3 scripts/select_random_genes.py core_genes 100 > core_genes_random100.csv
 bash copy_selected_genes.sh core_genes core_genes_random100.csv core_genes_random100
 
 # Build graphs and compute minimal path cover (-> recombinants + reduced graph)
-snakemake -s makegraphs.smk -c 32 -p --config seqsdir=core_genes_random100
+snakemake -s makegraphs.smk -c 32 -p --config seqsdir=core_genes_random100 recgraph=[/PATH/TO/RECGRAPH/BIN]
 
 # Extract mosaics
 bash get_mosaics.sh core_genes_random100
@@ -43,7 +43,7 @@ bash get_mosaics.sh core_genes_random100
 snakemake -s addnoise.smk -c 16 -p --config seqsdir=core_genes_random100
 
 # Align mosaics back to reduced graph
-snakemake -s align.smk -c 16 -p --config seqsdir=core_genes_random100
+snakemake -s align.smk -c 16 -p --config seqsdir=core_genes_random100 recgraph=[/PATH/TO/RECGRAPH/BIN]
 
 # results are in core_genes_random100.results.txt
 ```
@@ -52,5 +52,5 @@ snakemake -s align.smk -c 16 -p --config seqsdir=core_genes_random100
 In this experiment, we build graphs using `make_prg`, align FASTA files in `/data/cdifficile/`
 
 ```bash
-snakemake -s clost_diff.smk -c16 -p
+snakemake -s clost_diff.smk -c16 -p --config recgraph=[/PATH/TO/RECGRAPH/BIN]
 ```
