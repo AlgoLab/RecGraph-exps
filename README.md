@@ -50,7 +50,8 @@ snakemake -s align.smk -c 16 -p --config seqsdir=core_genes_random100 recgraph=[
 
 ### Experiment 2
 In this experiment, we build graphs using `make_prg`, align FASTA files in `/data/cdifficile/`
+(Adjust cores and memory depending on your setup.)
 
 ```bash
-snakemake -s clost_diff.smk -c16 -p --config recgraph=[/PATH/TO/RECGRAPH/BIN]
+snakemake -s clost_diff.smk --use-conda -p --cores 16 --resources mem_mb=100000
 ```
