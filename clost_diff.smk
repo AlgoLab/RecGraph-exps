@@ -9,11 +9,12 @@ rule all:
             msa=["mafft", "gappy", "sens"],
             fa=["simulated"],
             par=[
-                "mode_9-band_1-match_2-mism_4-open_4-ext_2-rec_4-recext_0.00001"
+                "mode_9-band_1-match_2-mism_4-open_4-ext_2-rec_4-recext_0.00001",
+                "mode_9-band_1-match_2-mism_4-open_4-ext_2-rec_28-recext_0.00001"
             ]
         ),
         expand(
-            "output/cdifficile/slpa-basis.{msa}/{fa}/jali/{mat}-{par}/summary.txt",
+            "output/cdifficile/slpa-basis.{msa}/{fa}/jali/{mat}-{par}/full.csv",
             msa=["mafft", "gappy", "sens"],
             fa=["simulated"],
             mat=["CUSTOM_MAT"],
@@ -22,9 +23,23 @@ rule all:
                 "open_4-ext_2-rec_28",
                 "open_4-ext_2-rec_48",
                 "open_4-ext_0-rec_4",
-                "open_4-ext_0-rec_28"
+                "open_4-ext_0-rec_28",
+                "open_4-ext_0-rec_40",
+                "open_4-ext_0-rec_48"
             ]
         )
+    output:
+        "output/cdifficile/full.csv"
+    conda: "envs/csvkit.yaml"
+    shell:
+        """
+        MYFI=""
+        MYGR=""
+        for f in {input:q}; do MYFI="$MYFI $f"; MYGR="$MYGR,${{f#output\/cdifficile\/}}"; done
+        csvstack -g ${{MYGR#,}} $MYFI > {output}
+        """
+
+
 
 rule download_jali:
     output:
@@ -173,10 +188,15 @@ rule make_csv:
             rid=line.split('\t')[0]
             m = re.search(r'recombination path (\d+) (\d+)', line)
             if m:
-                recpath=f"{m.group(1)}>{m.group(2)}"
+                recpath=f"{int(m.group(1))+1}>{int(m.group(2))+1}"
                 bp=line.split('\t')[-1]
             else:
-                recpath=bp='.'
+                m = re.search(r'best path: (\d+)', line)
+                if m:
+                    recpath=f"{int(m.group(1))+1}"
+                else:
+                    recpath=''
+                bp=''
             m = re.search(r'score: (\d+)', line)
             if m:
                 score=f"{m.group(1)}"
@@ -186,7 +206,7 @@ rule make_csv:
             if m:
                 displacement=f"{m.group(1)}"
             else:
-                displacement='-'
+                displacement=''
 
             print(rid, recpath, bp, score, displacement, sep=',', file=out)
         out.close()
@@ -239,7 +259,7 @@ rule aggregate_jali:
     input:
         aggregate_input
     output:
-        txt = "output/cdifficile/{msa}/{fa}/jali/{mat}-open_{op}-ext_{ext}-rec_{rec}/summary.txt",
+        txt = "output/cdifficile/{msa}/{fa}/jali/{mat}-open_{op}-ext_{ext}-rec_{rec}/full.csv",
     run:
         out = open(output.txt, 'w')
         print("ReadName,RecPaths,RecPos,Score,Displacement", file=out)
