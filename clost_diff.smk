@@ -21,6 +21,7 @@ rule all:
             par=[
                 "open_4-ext_2-rec_4",
                 "open_4-ext_2-rec_28",
+                "open_4-ext_2-rec_40",
                 "open_4-ext_2-rec_48",
                 "open_4-ext_0-rec_4",
                 "open_4-ext_0-rec_28",
