@@ -40,6 +40,26 @@ rule all:
         csvstack -g ${{MYGR#,}} $MYFI > {output}
         """
 
+rule simulated_recgraph_alone:
+    input:
+        expand(
+            "output/cdifficile/slpa-basis.{msa}/{fa}/recgraph/{par}/full.csv",
+            msa=["mafft"],
+            fa=["simulated"],
+            par=[
+                "mode_9-band_0.95-match_2-mism_4-open_4-ext_2-rec_4-recext_0.1"
+            ]
+        )
+    output:
+        "output/cdifficile/simulated_recgraph_alone.csv"
+    conda: "envs/csvkit.yaml"
+    shell:
+        """
+        MYFI=""
+        MYGR=""
+        for f in {input:q}; do MYFI="$MYFI $f"; MYGR="$MYGR,${{f#output\/cdifficile\/}}"; done
+        csvstack -g ${{MYGR#,}} $MYFI > {output}
+        """
 
 
 rule download_jali:

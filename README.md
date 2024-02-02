@@ -53,5 +53,8 @@ In this experiment, we build graphs using `make_prg`, align FASTA files in `/dat
 (Adjust cores and memory depending on your setup.)
 
 ```bash
-snakemake -s clost_diff.smk --use-conda -p --cores 16 --resources mem_mb=100000
+snakemake -s clost_diff.smk --use-conda -p --cores 16 --resources mem_mb=100000 -- output/cdifficile/simulated_recgraph_alone.csv
+snakemake -s clost_diff.smk --use-conda -p --cores 16 --resources mem_mb=100000 -- output/cdifficile/full.csv
+
+# results are in output/cdifficile/{simulated_recgraph_alone.csv,full.csv}
 ```
