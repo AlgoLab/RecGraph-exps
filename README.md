@@ -58,3 +58,13 @@ snakemake -s clost_diff.smk --use-conda -p --cores 16 --resources mem_mb=100000 
 
 # results are in output/cdifficile/{simulated_recgraph_alone.csv,full.csv}
 ```
+
+### Experiment A*
+```bash
+cd hla_exp
+bash get_data.sh
+snakemake -s generate_reads.smk -c 4
+snakemake -s a_star_align.smk -c 4 --config recgraph=[/PATH/TO/RECGRAPH/BIN]
+
+# alignments are in hla_exp/alignments/
+```

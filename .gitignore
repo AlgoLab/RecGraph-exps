@@ -3,3 +3,6 @@
 __pycache__/
 /bin/
 /output/
+/hla_exp/alignments/
+/hla_exp/logs/
+/data/HLA-*
