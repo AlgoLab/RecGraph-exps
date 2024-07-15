@@ -20,7 +20,7 @@ cd ..
 1. Install [RecGraph](https://github.com/AlgoLab/RecGraph)
 2. All other dependencies are available on conda
 ```
-mamba create -c bioconda -n rg-exps snakemake-minimal make_prg pandas seaborn biopython graphaligner vg odgi pggb samtools
+mamba create -c bioconda -n rg-exps snakemake-minimal make_prg pandas seaborn biopython graphaligner vg odgi pggb samtools gfapy
 ```
 
 ### Experiment 1
@@ -61,10 +61,10 @@ snakemake -s clost_diff.smk --use-conda -p --cores 16 --resources mem_mb=100000 
 
 ### Experiment A*
 ```bash
-cd hla_exp
-bash get_data.sh
+bash get_HLA_genes.sh
 snakemake -s generate_reads.smk -c 4
-snakemake -s a_star_align.smk -c 4 --config recgraph=[/PATH/TO/RECGRAPH/BIN]
+bash split_read.sh
+snakemake -s a_star_align.smk -c 4
 
 # alignments are in hla_exp/alignments/
 ```
