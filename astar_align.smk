@@ -1,7 +1,7 @@
 import os
 
 genes = []
-with open("genes_HLA.txt", "r") as f:
+with open("genes_HLA_short.txt", "r") as f:
     genes = [gene.strip() for gene in f.readlines()]
 
 error_levels = ["0", "3", "5", "10", "rec"]
@@ -15,6 +15,7 @@ for gene in genes:
                 if read_file.startswith("read_") and read_file.endswith(".fa"):
                     path = os.path.join(f"{gene}/reads_{err}_split", read_file.split(".")[0])
                     split_read_files.append(path)
+print(split_read_files)
 
 rule all:
     input:

@@ -59,12 +59,25 @@ snakemake -s clost_diff.smk --use-conda -p --cores 16 --resources mem_mb=100000 
 # results are in output/cdifficile/{simulated_recgraph_alone.csv,full.csv}
 ```
 
-### Experiment A*
+### Experiment A* against old recgraph
 ```bash
-bash get_HLA_genes.sh
+bash get_HLA_genes_short.sh
 snakemake -s generate_reads.smk -c 4
 bash split_read.sh
 snakemake -s a_star_align.smk -c 4
 
-# alignments are in hla_exp/alignments/
+# alignments are in output/HLA/
+```
+
+### Experiment HLA genes
+
+```bash
+bash get_HLA_genes_full.sh
+snakemake -s generate_HLA_reads_all.smk -c 4
+bash split_HLA_read__full.sh
+snakemake -s align_HLA_full.smk -c 4
+python scripts/make_HLA_full_csv
+
+# alignments are in output/HLA_full
+# performances results are in mean_values.csv
 ```

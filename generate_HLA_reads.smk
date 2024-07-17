@@ -1,7 +1,7 @@
 import os
 
 genes = []
-with open("genes_HLA.txt", "r") as f:
+with open("genes_HLA_short.txt", "r") as f:
     genes = [gene.strip() for gene in f.readlines()]
 
 rule all:

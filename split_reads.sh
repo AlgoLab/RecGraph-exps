@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the genes and error levels
-GENES=$(cat genes_HLA.txt)
+GENES=$(cat genes_HLA_short.txt)
 ERRORS=("0" "3" "5" "10" "rec")
 
 # Iterate over each gene and error level

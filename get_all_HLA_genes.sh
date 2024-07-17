@@ -1,6 +1,6 @@
 #!/bin/bash
 
-input_file="genes_HLA_short.txt"
+input_file="genes_HLA_full.txt"
 graphs_dir="https://raw.githubusercontent.com/ekg/HLA-zoo/master/graphs/spoa/"
 seqs_dir="https://raw.githubusercontent.com/ekg/HLA-zoo/master/seqs/"
 
@@ -18,8 +18,8 @@ do
     graph_url="${graphs_dir}${gene_name_trimmed}.gfa"
     seq_url="${seqs_dir}${gene_name_trimmed}.fa"
     directory="$gene_name_trimmed"
-    mkdir -p "output/HLA/genes/$directory"
-    curl -o "output/HLA/genes/$directory/graph.gfa" "$graph_url"
-    curl -o "output/HLA/genes/$directory/reads_0.fa" "$seq_url"
+    mkdir -p "output/HLA_full/genes/$directory"
+    curl -o "output/HLA_full/genes/$directory/graph.gfa" "$graph_url"
+    curl -o "output/HLA_full/genes/$directory/reads_0.fa" "$seq_url"
     echo "$gene_name"
 done < "$input_file"

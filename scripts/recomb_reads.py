@@ -1,0 +1,136 @@
+import gfapy
+import random
+import sys
+
+def extract_paths(file):
+    with open(file) as f:
+        lines = f.readlines()
+        graph = gfapy.Gfa()
+        paths = []
+        sequences = {}
+        for line in lines:
+            line = line.strip()
+            graph.append(line)
+            if line.startswith("P"):
+                paths.append(line)
+            elif line.startswith("S"):
+                fields = line.split("\t")
+                idx = fields[1]
+                sequence = fields[2]
+                sequences[idx] = sequence
+    return paths, graph, sequences
+
+def parse_paths(paths):
+    parsed_paths = []
+    for path in paths:
+        fields = path.split("\t")
+        segments = fields[2].split(",")
+        parsed_paths.append((fields[1], segments))
+    return parsed_paths
+
+def can_be_formed_by_other_paths(path, other_paths):
+    for other_path1 in other_paths:
+        for other_path2 in other_paths:
+            if other_path1 != other_path2:
+                for k in range(1, len(other_path1)):
+                    for l in range(1, len(other_path2)):
+                        if other_path1[:k] + other_path2[l:] == path:
+                            return True
+    return False
+
+def find_common_nodes(path1, path2):
+    return set(path1).intersection(set(path2))
+
+def clean_node(node):
+    return node.rstrip("+-")
+
+def reverse_complement(seq):
+    complement = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}
+    return ''.join(complement[base] for base in reversed(seq))
+
+def generate_reads_from_paths(paths, sequences, max_reads=None):
+    reads = []
+    generated_reads = 0
+    tries = 0
+    while True:
+        tries += 1
+        path1_id, segments1 = random.choice(paths)
+        path2_id, segments2 = random.choice(paths)
+        
+        if path1_id == path2_id and tries < 1000:
+            continue
+        
+        common_nodes = find_common_nodes(segments1, segments2)
+        
+        if len(common_nodes) < 3:
+            continue
+        
+        mid_point = len(common_nodes) // 2
+        
+        common_node = random.choice(list(common_nodes)[max(mid_point-10, 0):min(mid_point+11, len(common_nodes))])
+
+        idx1 = segments1.index(common_node)
+        idx2 = segments2.index(common_node)
+        
+        combined_segments = segments1[:idx1+1] + segments2[idx2+1:]
+
+        new_read = ''
+        for node in combined_segments:
+            cleaned_node = clean_node(node)
+            if node.endswith('-'):
+                new_read += reverse_complement(sequences[cleaned_node])
+            else:
+                new_read += sequences[cleaned_node]
+                
+        reads.append((path1_id, path2_id, new_read))
+        generated_reads += 1
+        
+        if max_reads is not None and generated_reads >= max_reads:
+            break
+            
+    return reads
+
+def print_reads(reads):
+    for i, read in enumerate(reads):
+        print(f">read_{i}\n{read[2]}")
+
+def process_gfa_file(input_file, max_reads=None):
+    paths, graph, sequences = extract_paths(input_file)
+    parsed_paths = parse_paths(paths)
+    
+    unique_paths = []
+    remove_paths = []
+
+    seen = set()
+    for i, (path_id, path) in enumerate(parsed_paths):
+        path_tuple = tuple(path)
+        if path_tuple not in seen:
+            seen.add(path_tuple)
+            unique_paths.append((i, path))
+        else:
+            remove_paths.append((i, path))
+    
+        new_graph = []
+    graph_lines = graph.lines
+    p_count = 0
+    for line in graph_lines:
+        line = str(line).strip()
+        if line.startswith("P"):
+            if p_count not in [path[0] for path in remove_paths]:
+                new_graph.append(line)
+            p_count += 1
+        else:
+            new_graph.append(line)
+
+    reads = generate_reads_from_paths(unique_paths, sequences, max_reads=max_reads)
+    
+    print_reads(reads)
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python script.py <input_gfa_file> [max_reads]")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
+    max_reads = int(sys.argv[2]) if len(sys.argv) > 2 else None
+    process_gfa_file(input_file, max_reads=max_reads)
